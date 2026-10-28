@@ -45,25 +45,36 @@ class ApiConfig {
 
   /// Resolve an application URL (e.g. http://127.0.0.1:8080) to the backend's host
   /// if the backend is running on a remote host (e.g. EC2 public IP or domain).
+
+  /// Resolve generated application URLs to the HTTPS preview server.
   static String resolveAppUrl(String rawUrl) {
-    if (rawUrl.isEmpty) return rawUrl;
+    if (rawUrl.trim().isEmpty) return rawUrl;
+
     try {
       final parsed = Uri.parse(rawUrl);
       final currentBase = Uri.parse(baseUrl);
-      if (currentBase.host.isNotEmpty &&
-          currentBase.host != '127.0.0.1' &&
-          currentBase.host != 'localhost') {
-        if (parsed.host == '127.0.0.1' || parsed.host == 'localhost') {
-          return parsed
-              .replace(
-                scheme: 'https',
-                host: currentBase.host,
-                port: parsed.port == 8080 ? 8443 : parsed.port,
-              )
-              .toString();
-        }
+
+      if (currentBase.host.isEmpty) return rawUrl;
+
+      // Convert old EC2 preview URLs and local preview URLs
+      // to the new HTTPS preview endpoint.
+      final isOldPreviewHost = parsed.host == '15.134.215.0' ||
+          parsed.host == '127.0.0.1' ||
+          parsed.host == 'localhost';
+
+      if (isOldPreviewHost && parsed.port == 8080) {
+        return parsed
+            .replace(
+              scheme: 'https',
+              host: currentBase.host,
+              port: 8443,
+            )
+            .toString();
       }
-    } catch (_) {}
-    return rawUrl;
+
+      return rawUrl;
+    } catch (_) {
+      return rawUrl;
+    }
   }
 }

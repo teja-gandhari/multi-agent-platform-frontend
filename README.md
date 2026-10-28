@@ -58,18 +58,3 @@ Built specifically adhering to the NexusAI space-navy project theme:
 
 ---
 
-## 🛠️ Running Locally
-
-1. **Backend Server**: Default URL is configured to `http://15.134.215.0:8000`.
-2. **Launch the Flutter app**:
-   ```bash
-   flutter run -d chrome
-   ```
-   Or for Windows desktop:
-   ```bash
-   flutter run -d windows
-   ```
-   Or override the backend URL at runtime:
-   ```bash
-   flutter run -d chrome --dart-define=API_BASE_URL=http://15.134.215.0:8000
-   ```
